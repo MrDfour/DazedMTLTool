@@ -329,12 +329,12 @@ def validate_translation_content(original_items, translated_items, langRegex):
     return is_valid, invalid_indices, reasons
 
 # Load .env, strip accidental whitespace, set base URL / org / API key.
-# Handles the Gemini compatibility layer as a special case.
+# Gemini uses its compatibility endpoint only when no custom API URL is set.
 load_dotenv()
 api_provider = os.getenv("API_PROVIDER", "openai").lower()
 env_api = os.getenv("api", "").strip()
-if api_provider == "gemini":
-    # Use Google Generative Language compatibility endpoint when running Gemini
+if api_provider == "gemini" and not env_api:
+    # Use Google Generative Language compatibility endpoint only as fallback.
     openai.base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
     openai.organization = None
 else:
@@ -1182,7 +1182,7 @@ def translateText(system, user, history, penalty, formatType, model, numLines=No
     _live_api = os.getenv("api", "").strip()
     _live_key = os.getenv("key", "").strip()
     _live_provider = os.getenv("API_PROVIDER", "openai").lower()
-    if _live_provider == "gemini":
+    if _live_provider == "gemini" and not _live_api:
         openai.base_url = "https://generativelanguage.googleapis.com/v1beta/openai/"
     elif _live_api:
         openai.base_url = _live_api
