@@ -326,6 +326,7 @@ class ConfigTab(QWidget):
             ("Claude (Anthropic)", "https://api.anthropic.com/v1"),
             ("Gemini", "https://generativelanguage.googleapis.com/v1beta/openai/"),
             ("DeepSeek", "https://api.deepseek.com/v1/"),
+            ("Nvidia", "https://integrate.api.nvidia.com/v1"),
         ]
         for _name, _url in _url_presets:
             _action = api_url_menu.addAction(_name)
@@ -359,6 +360,8 @@ class ConfigTab(QWidget):
         self.model_combo = QComboBox()
         self.model_combo.setEditable(True)
         self.model_combo.addItems(ModelFetchThread.DEFAULTS)
+        if self.model_combo.lineEdit():
+            self.model_combo.lineEdit().setPlaceholderText("Enter model name (e.g., deepseek-ai/deepseek-v4-pro)")
         self.model_combo.setFixedWidth(270)
 
         self.model_refresh_btn = QToolButton()
