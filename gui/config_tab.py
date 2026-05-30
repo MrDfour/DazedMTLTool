@@ -137,12 +137,27 @@ class ConfigTab(QWidget):
             self.reset_to_defaults()
         else:
             self.load_from_env()
+        self._update_model_placeholder()
         
         # Connect auto-save after initial load
         self.connect_auto_save()
 
         # Fetch latest models in the background once the UI is shown
         QTimer.singleShot(0, lambda: self.fetch_models(silent=True))
+
+    def _is_nvidia_api_url(self, api_url: str) -> bool:
+        """Return True when the configured URL points to Nvidia's OpenAI-compatible API."""
+        return "integrate.api.nvidia.com" in (api_url or "").strip().lower()
+
+    def _update_model_placeholder(self):
+        """Show a manual model-entry hint only when Nvidia API is selected."""
+        line_edit = self.model_combo.lineEdit()
+        if not line_edit:
+            return
+        if self._is_nvidia_api_url(self.api_url_edit.text()):
+            line_edit.setPlaceholderText("Enter Nvidia model name (e.g., deepseek-ai/deepseek-v4-pro)")
+        else:
+            line_edit.setPlaceholderText("")
         
     def init_ui(self):
         """Initialize the user interface with horizontal icon navigation at top."""
@@ -332,6 +347,7 @@ class ConfigTab(QWidget):
             _action = api_url_menu.addAction(_name)
             _action.triggered.connect(lambda checked, u=_url: self.api_url_edit.setText(u))
         api_url_preset_btn.setMenu(api_url_menu)
+        self.api_url_edit.textChanged.connect(self._update_model_placeholder)
 
         api_url_layout.addWidget(self.api_url_edit)
         api_url_layout.addWidget(api_url_preset_btn)
@@ -360,8 +376,6 @@ class ConfigTab(QWidget):
         self.model_combo = QComboBox()
         self.model_combo.setEditable(True)
         self.model_combo.addItems(ModelFetchThread.DEFAULTS)
-        if self.model_combo.lineEdit():
-            self.model_combo.lineEdit().setPlaceholderText("Enter model name (e.g., deepseek-ai/deepseek-v4-pro)")
         self.model_combo.setFixedWidth(270)
 
         self.model_refresh_btn = QToolButton()
