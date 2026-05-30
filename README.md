@@ -109,7 +109,7 @@ This means Python wasn't added to your PATH. You have two options:
 
 1. Inside the tool folder, find `.env.example` and make a copy of it named `.env`.
 2. Open `.env` in any text editor (Notepad works fine) and fill in your API details:
-   - `api` — Your API base URL (for Nvidia use `https://integrate.api.nvidia.com/v1`).
+   - `api` — Your API base URL (for Nvidia use `https://integrate.api.nvidia.com/v1/`).
    - `key` — Your API key.
    - `organization` — Your organization key (make something up if using a self-hosted or non-OpenAI API).
    - `API_PROVIDER` — Use `openai` for OpenAI-compatible providers (including Nvidia), or `gemini` for Gemini.
